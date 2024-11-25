@@ -1,0 +1,28 @@
+services:
+  database:
+    container_name: database
+    image: postgres:12.8
+    restart: always
+    environment:
+      - POSTGRES_USER=pg
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=crud
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  music_lib:
+    build: .
+    command: [ "./app" ]
+    ports:
+      - 8080:8080
+    depends_on:
+      database:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+volumes:
+  db:
